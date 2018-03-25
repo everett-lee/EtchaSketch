@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<head>
+  <title> Etch-a-Sketch </title>
+  <link rel="stylesheet" href="css/style.css">
+
+
+</head>
+<body>
+  <h1>
+     Etch-a-Sketch
+  </h1>
+  <div id="container">
+  </div>
+  <div id="buttonDiv">
+     <button type="button" id="resetButton" class="buttons">Reset</button>   
+     <button type="button" id="blackButton" class="buttons">Paint it black!</button>   
+     <button type="button" id="rainbowButton" class="buttons">Taste the... colours?</button>   
+  </div>
+
+  <script>
+	
+	
+	const container = document.querySelector('#container');
+	const grid = document.getElementsByClassName('gridElement');
+	let gridLength = 10;
+
+	// Generates a random number beteen 1 and 255
+    	function randGenerator() {
+		num = Math.floor((Math.random() * 255));
+
+		if (num % 1 != 0) {
+			return randGenerator();
+		} else {
+		return num;
+		}
+	}
+
+	// Creates divs in area of the Etch-a-Sketch
+	function divBuilder(length) {
+		boxArea = ((650/length)-0.008)+'px';
+		for (i = 1; i <= (length * length); i++) {
+			const gridBox = document.createElement('div');
+			gridBox.classList.add('gridElement');
+			container.appendChild(gridBox);
+		}
+	}
+
+	// Removes existing grid
+	function divDeleter() {
+		while(container.firstChild) container.removeChild(container.firstChild);
+	}
+
+	// Styles grid boxes
+	function styleBuilder()	{
+		for (i = 0; i < grid.length; i++) {
+			grid[i].style.width = boxArea;
+			grid[i].style.height = boxArea;
+			grid[i].style.cssFloat = "left";
+			grid[i].style.backgroundColor = "#CBCBCB";
+		}
+	}
+
+	// resets board
+	function resetBoard() {
+		divDeleter()
+		gridLength = setLength();
+		divBuilder(gridLength);
+		styleBuilder();
+		colourChanger("black");
+	}
+
+
+	// Gets new board length
+	function setLength() {
+		let boardInput = prompt("Choose a number of rows, 1-60", "1");
+		if (boardInput === '' || boardInput === null) {
+ 			return gridLength;
+		}
+		while (boardInput < 1 || boardInput > 60 || isNaN(boardInput)) {
+			if (boardInput === '' || boardInput === null) {
+				return gridLength;
+			} else {
+				boardInput = prompt("Choose a number of rows, 1-60", "1");
+			}
+		}
+		return boardInput;
+	}
+		
+	// Adds event listeners
+	function colourChanger(colour) {
+		if (colour === "black") {
+			for (i = 0; i < grid.length; i++) {
+			grid[i].removeEventListener("mouseover", rainbow, false);
+			grid[i].addEventListener("mouseover", black, false);
+			}
+		} else if (colour === "rainbow") {
+			for (i = 0; i < grid.length; i++) {
+			grid[i].addEventListener("mouseover", rainbow, false);
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	// Applies black colour
+	function black() {  
+	 	  this.style.backgroundColor = "black";
+	}
+
+	// Applies rainbow colours randomly
+	function rainbow() {  
+		R = randGenerator()
+		G = randGenerator()
+		B = randGenerator()  
+		this.style.backgroundColor = "rgb(" + R + ", " + G + ", " + B + ")";
+	}
+
+
+	resetButton = document.getElementById("resetButton");
+	resetButton.onclick = function() {resetBoard()};
+	blackButton = document.getElementById("blackButton")
+	blackButton.onclick = function() {colourChanger("black")};
+	rainbowButton = document.getElementById("rainbowButton");
+	rainbowButton.onclick = function() {colourChanger("rainbow")};
+
+	divBuilder(gridLength);
+	styleBuilder();
+	colourChanger("black");
+
+	
+  </script>
+</body>
